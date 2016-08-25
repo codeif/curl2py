@@ -1,0 +1,71 @@
+# -*- coding: utf-8 -*-
+from collections import OrderedDict
+from .curl_parser import parser
+from .utils import (
+    parse_url_and_params, parse_cookies_and_headers, parse_formdata,
+    dict_to_pretty_string)
+
+
+def format_requests_code(method, url, **kwargs):
+    keys = [
+        'params', 'data', 'headers', 'cookies', 'files', 'auth', 'timeout',
+        'allow_redirects', 'proxies', 'hooks', 'stream', 'verify', 'cert',
+        'json'
+    ]
+    kw = []
+    variables = []
+    for k in keys:
+        v = kwargs.get(k)
+        if not v:
+            continue
+        if isinstance(v, dict):
+            v = dict_to_pretty_string(v)
+            variables.append('\n{0} = {1}\n'.format(k, v))
+        else:
+            variables.append('\n{0} = "{1}"\n'.format(k, v))
+        kw.append(', {0}={0}'.format(k))
+
+    result = """import requests
+
+url = "{url}"
+{variables}
+r = requests.{method}(url{kwargs})
+
+print(r.text)""".format(
+        method=method.lower(),
+        url=url,
+        variables=''.join(variables),
+        kwargs=''.join(kw)
+    )
+    return result
+
+
+def main():
+    parsed_args = parser.parse_args()
+
+    kwargs = {}
+
+    body = parsed_args.data or parsed_args.data_binary
+
+    # method
+    method = parsed_args.request
+    if not method:
+        if body:
+            method = 'POST'
+        else:
+            method = 'GET'
+
+    url, params = parse_url_and_params(parsed_args.url)
+    if params:
+        kwargs['params'] = params
+
+    cookies, headers = parse_cookies_and_headers(parsed_args.header)
+    kwargs['cookies'], kwargs['headers'] = cookies, OrderedDict(headers)
+
+    content_type = headers.get('Content-Type')
+    if not content_type and parsed_args.data:
+        content_type = 'application/x-www-form-urlencoded'
+    if body:
+        _, kwargs['data'], kwargs['files'] = parse_formdata(body, content_type)
+
+    return format_requests_code(method, url, **kwargs)
