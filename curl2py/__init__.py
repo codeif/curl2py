@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import json
 from collections import OrderedDict
+import werkzeug.http
+
 from .curl_parser import parser
 from .utils import (
-    parse_url_and_params, parse_cookies_and_headers, parse_formdata,
+    is_json, parse_url_and_params, parse_cookies_and_headers, parse_formdata,
     dict_to_pretty_string)
 
 
@@ -12,18 +15,20 @@ def format_requests_code(method, url, **kwargs):
         'allow_redirects', 'proxies', 'hooks', 'stream', 'verify', 'cert',
         'json'
     ]
+    keys_alias = {'json': 'json_data'}
     kw = []
     variables = []
     for k in keys:
+        key_alias = keys_alias.get(k, k)
         v = kwargs.get(k)
         if not v:
             continue
         if isinstance(v, dict):
             v = dict_to_pretty_string(v)
-            variables.append('\n{0} = {1}\n'.format(k, v))
+            variables.append('\n{0} = {1}\n'.format(key_alias, v))
         else:
-            variables.append('\n{0} = "{1}"\n'.format(k, v))
-        kw.append(', {0}={0}'.format(k))
+            variables.append('\n{0} = "{1}"\n'.format(key_alias, v))
+        kw.append(', {0}={1}'.format(k, key_alias))
 
     result = """import requests
 
@@ -65,7 +70,13 @@ def main():
     content_type = headers.get('Content-Type')
     if not content_type and parsed_args.data:
         content_type = 'application/x-www-form-urlencoded'
+
     if body:
-        _, kwargs['data'], kwargs['files'] = parse_formdata(body, content_type)
+        mimetype, options = werkzeug.http.parse_options_header(content_type)
+        if is_json(mimetype):
+            kwargs['json'] = json.loads(body)
+        else:
+            _, kwargs['data'], kwargs['files'] = \
+                parse_formdata(body, content_type)
 
     return format_requests_code(method, url, **kwargs)

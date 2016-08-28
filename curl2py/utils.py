@@ -17,6 +17,14 @@ def format_url(url):
     return url
 
 
+def is_json(mimetype):
+    if mimetype == 'application/json':
+        return True
+    if mimetype.startswith('application/') and mimetype.endswith('+json'):
+        return True
+    return False
+
+
 def parse_url_and_params(origin_url):
     """:return: tuple. type is (str, MultiDict)"""
     origin_url = format_url(origin_url)
