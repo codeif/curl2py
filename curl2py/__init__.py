@@ -27,7 +27,7 @@ def format_requests_code(method, url, **kwargs):
             v = dict_to_pretty_string(v)
             variables.append('\n{0} = {1}\n'.format(key_alias, v))
         else:
-            variables.append('\n{0} = "{1}"\n'.format(key_alias, v))
+            variables.append('\n{0} = {1}\n'.format(key_alias, repr(v)))
         kw.append(', {0}={1}'.format(k, key_alias))
 
     result = """import requests
@@ -76,7 +76,10 @@ def main():
         if is_json(mimetype):
             kwargs['json'] = json.loads(body)
         else:
-            _, kwargs['data'], kwargs['files'] = \
-                parse_formdata(body, content_type)
+            data, forms, kwargs['files'] = parse_formdata(body, content_type)
+            if forms:
+                kwargs['data'] = forms
+            else:
+                kwargs['data'] = data
 
     return format_requests_code(method, url, **kwargs)
