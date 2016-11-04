@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 import json
-import urllib.parse
 from io import BytesIO
 from collections import OrderedDict
 
+import six
 from six.moves import http_cookies as Cookie
 import werkzeug.urls
 from requests.structures import CaseInsensitiveDict
+
+if six.PY3:
+    from urllib.parse import urlparse
+elif six.PY2:
+    from urlparse import urlparse
 
 
 def format_url(url):
@@ -28,7 +33,7 @@ def is_json(mimetype):
 def parse_url_and_params(origin_url):
     """:return: tuple. type is (str, MultiDict)"""
     origin_url = format_url(origin_url)
-    parse_result = urllib.parse.urlparse(origin_url)
+    parse_result = urlparse(origin_url)
     url = '{0}://{1}{2}'.format(parse_result.scheme or 'http',
                                 parse_result.netloc,
                                 parse_result.path)
