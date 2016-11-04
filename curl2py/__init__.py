@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 import json
 from collections import OrderedDict
 import werkzeug.http
@@ -82,4 +83,5 @@ def main():
             else:
                 kwargs['data'] = data
 
-    return format_requests_code(method, url, **kwargs)
+    code = format_requests_code(method, url, **kwargs)
+    print(code)
