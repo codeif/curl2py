@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
-from io import BytesIO
 from collections import OrderedDict
+from io import BytesIO
 
 import six
-from six.moves import http_cookies as Cookie
 import werkzeug.urls
 from requests.structures import CaseInsensitiveDict
+from six.moves import http_cookies as Cookie
 
 if six.PY3:
     from urllib.parse import urlparse
@@ -80,6 +80,7 @@ def dict_to_pretty_string(the_dict):
 
     return ('\n').join(
         json.dumps(the_dict,
+                   ensure_ascii=False,
                    indent=4,
                    separators=(',', ': ')).splitlines()
     )

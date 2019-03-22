@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-import sys
 import json
 from collections import OrderedDict
+
 import werkzeug.http
 
 from .curl_parser import parser
-from .utils import (
-    is_json, parse_url_and_params, parse_cookies_and_headers, parse_formdata,
-    dict_to_pretty_string)
+from .utils import dict_to_pretty_string, is_json, parse_cookies_and_headers, parse_formdata, parse_url_and_params
 
 
 def format_requests_code(method, url, **kwargs):

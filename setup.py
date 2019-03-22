@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name='curl2py',
-    version='0.0.1',
+    version='0.0.2',
     description='Conver cURL command line to python-requests code.',
     author='codeif',
     author_email='me@codeif.com',
