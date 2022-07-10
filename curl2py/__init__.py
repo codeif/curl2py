@@ -49,7 +49,7 @@ def main():
 
     kwargs = {}
 
-    body = parsed_args.data or parsed_args.data_binary
+    body = parsed_args.data or parsed_args.data_binary or parsed_args.data_raw
 
     # method
     method = parsed_args.request
