@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='curl2py',
-    version='0.0.2',
+    version='0.0.3',
     description='Conver cURL command line to python-requests code.',
     author='codeif',
     author_email='me@codeif.com',
