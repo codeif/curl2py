@@ -17,15 +17,15 @@ elif six.PY2:
 def format_url(url):
     """if url not contains schema, add shema
     eg. httpbin.org -> http://httpbin.org"""
-    if not (url.startswith('//') or url.startswith('http')):
-        url = 'http://' + url
+    if not (url.startswith("//") or url.startswith("http")):
+        url = "http://" + url
     return url
 
 
 def is_json(mimetype):
-    if mimetype == 'application/json':
+    if mimetype == "application/json":
         return True
-    if mimetype.startswith('application/') and mimetype.endswith('+json'):
+    if mimetype.startswith("application/") and mimetype.endswith("+json"):
         return True
     return False
 
@@ -34,9 +34,9 @@ def parse_url_and_params(origin_url):
     """:return: tuple. type is (str, MultiDict)"""
     origin_url = format_url(origin_url)
     parse_result = urlparse(origin_url)
-    url = '{0}://{1}{2}'.format(parse_result.scheme or 'http',
-                                parse_result.netloc,
-                                parse_result.path)
+    url = "{0}://{1}{2}".format(
+        parse_result.scheme or "http", parse_result.netloc, parse_result.path
+    )
 
     query = parse_result.query
     params = None
@@ -50,9 +50,9 @@ def parse_cookies_and_headers(origin_headers):
     cookies = OrderedDict()
     headers = CaseInsensitiveDict()
     for curl_header in origin_headers:
-        header_key, header_value = curl_header.split(':', 1)
+        header_key, header_value = curl_header.split(":", 1)
 
-        if header_key.lower() == 'cookie':
+        if header_key.lower() == "cookie":
             cookie = Cookie.SimpleCookie(header_value)
             for key in cookie:
                 cookies[key] = cookie[key].value
@@ -62,7 +62,7 @@ def parse_cookies_and_headers(origin_headers):
 
 
 def parse_formdata(body, content_type):
-    data = body.encode('utf-8')
+    data = body.encode("utf-8")
 
     content_length = len(data)
     mimetype, options = werkzeug.http.parse_options_header(content_type)
@@ -78,9 +78,8 @@ def dict_to_pretty_string(the_dict):
     if not the_dict:
         return "{}"
 
-    return ('\n').join(
-        json.dumps(the_dict,
-                   ensure_ascii=False,
-                   indent=4,
-                   separators=(',', ': ')).splitlines()
+    return ("\n").join(
+        json.dumps(
+            the_dict, ensure_ascii=False, indent=4, separators=(",", ": ")
+        ).splitlines()
     )
