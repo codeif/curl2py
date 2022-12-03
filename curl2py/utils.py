@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json
+import pprint
 from collections import OrderedDict
 from io import BytesIO
 
@@ -77,9 +77,4 @@ def parse_formdata(body, content_type):
 def dict_to_pretty_string(the_dict):
     if not the_dict:
         return "{}"
-
-    return ("\n").join(
-        json.dumps(
-            the_dict, ensure_ascii=False, indent=4, separators=(",", ": ")
-        ).splitlines()
-    )
+    return pprint.pformat(the_dict)

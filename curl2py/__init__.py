@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-from collections import OrderedDict
 
 import werkzeug.http
 
@@ -78,7 +77,7 @@ def main():
         kwargs["params"] = params
 
     cookies, headers = parse_cookies_and_headers(parsed_args.header)
-    kwargs["cookies"], kwargs["headers"] = cookies, OrderedDict(headers)
+    kwargs["cookies"], kwargs["headers"] = cookies, dict(headers)
 
     content_type = headers.get("Content-Type")
     if not content_type and parsed_args.data:
